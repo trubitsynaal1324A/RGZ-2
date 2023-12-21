@@ -1,5 +1,5 @@
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask import Flask, Blueprint, render_template, request, make_response, redirect, url_for
+from flask import Flask, Blueprint, render_template, request, make_response, redirect, url_for, session 
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from Db import db
@@ -123,3 +123,108 @@ def delete_user():
     db.session.commit()
     logout_user()
     return redirect('/log')
+
+@app.route('/rgz/logout')
+def logout():
+    logout_user() 
+    return redirect('/rgz/log')
+
+@app.route('/rgz/korzina')
+def cart():
+    cart_items = request.form.get("cart_items", [])
+    cart_total = request.form.get("cart_total", 0)
+
+    return render_template("korzina.html", cart_items=cart_items, cart_total=cart_total)
+
+@app.route('/rgz/add_to_cart', methods=["POST"])
+def add_to_cart():
+        if not session.get ("username"):
+            abort(403)
+
+        product_ids = request.form.getlist("product_id")
+        quantities = request.form.getlist("quantity")
+
+        if not (product_ids and quantities):
+            abort(400)
+
+        cart_items = session.get("cart_items",[])
+        cart_total = session.get("cart_total",0 ) # Переменная для хранения общей суммы
+
+        for product_id, quantity in zip(product_ids, quantites):
+            product = Product.query.filter_by(id=product_id).first()
+
+            if product:
+                available_quantity = product.quantity
+                requested_quantity = int(quantity)
+                if available_quantity >= requested_quantity:
+                    cart_items.append({"name": product["name"], "price": product["price"], "quantity": quantity})
+                    cart_total += int(product.price) * requested_quantity
+
+                else:
+                    cart_items.append({"name": product["name"] , "price": product["price"] , "quantity": available_quantity})
+                    cart_total += int(product.price) * available_quantity
+
+        session["cart_items"] = cart_items
+        session["cart_total"] = cart_total
+
+        return render_template("korzina.html", cart_items=cart_items, cart_total=cart_total)
+
+
+
+@app.route('/rgz/remove_from_cart', methods=["POST"])
+def remove_from_cart():
+    if not session.get("username"):
+        abort(403)
+
+    product_name = request.form.get("product_name")
+    product_price = request.form.get("product_price")
+    product_quantity = request.form.get("product_uantity")
+
+    if not (product_name and product_price and product_quantity):
+        abort(400)
+    cart_items = session.get("cart_items", [])
+    cart_total = session.get("cart_total", 0)
+
+    updated_cart_items = []
+    for item in cart_items:
+        if item["name"] != product_name or item["price"] != product_price or item["quantity"] != product_quantity:
+            updated_cart_items.append(item)
+            price = item["price"].replace(",", ".")  
+            cart_total += float(price) * int(item["quantity"]) 
+
+    session["cart_items"] = updated_cart_items
+    session["cart_total"] = cart_total 
+
+    
+    return redirect("/rgz/korzina")
+
+@app.route('/rgz/oplata', methods=["GET", "POST"])
+def oplata():
+    if not session.get("username"):
+        return redirect('/rgz/log')  # Перенаправление на страницу входа
+
+    if request.method == "POST":
+        # Получить данные карты из формы
+        card_num = request.form.get("card_num")
+        cvv = request.form.get("cvv")
+
+        # Проверить данные карты
+        if len(card_num) != 16:
+            print('Неверный номер карты. Пожалуйста, введите 16-значный номер карты.', 'error')
+            return redirect('/rgz/oplata')
+        
+        if len(cvv) != 3:
+            print('Неверный CVV. Пожалуйста, введите 3-значный CVV код.', 'error')
+            return redirect('/rgz/oplata')
+
+        # Очистка корзины после оплаты
+        session.pop("cart_items", None)
+        session.pop("cart_total", None)
+
+        return render_template('success.html')
+    
+    # Вывести информацию о корзине и форму оплаты
+    cart_items = session.get("cart_items", [])
+    cart_total = session.get("cart_total", 0)
+
+    return render_template("oplata.html", cart_items=cart_items, cart_total=cart_total)
