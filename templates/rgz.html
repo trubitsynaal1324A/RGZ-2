@@ -54,8 +54,8 @@
   
     {% for product in products %}
     <div class="product">
-        <h3>{{ product.name_ }}</h3>
-        <p>{{ product.opisanie }}</p>
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
         <p>Цена: {{ product.price }} руб.</p>
         {% if username != "Anon" %}
             <form action="/rgz/add_to_cart" method="POST">
