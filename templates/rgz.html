@@ -1,0 +1,73 @@
+<style>
+    .product {
+        width: 30%;
+        display: inline-block;
+        margin: 1%;
+        vertical-align: top;
+        text-align: center;
+    }
+    button {
+        font: 16px Stem-medium, arial, sans-serif; /*Выбираем шрифт кнопки */
+        background-color: rgb(51, 101, 151); /*Выбираем цвет фона */
+        border-radius: 8px; /*Закругление */
+        color: white; /*Выбираем цвет текста*/
+        padding: 16px 20px; /*Размер внутренних отступов*/
+        margin: 8px 0;/*Размер внешних отступов*/
+        border: none; /*Без границы*/
+        cursor: pointer; /*Изменение курсора при наведении на кнопку*/
+        width: auto; /*Ширина*/
+    }
+    input{
+        width: 10%;
+    }
+    
+</style>
+{% extends 'base.html' %}
+
+{% block lab %} {% endblock %}
+
+{% block main %}
+    
+    <ul >
+        <li >
+            <a href="/rgz/log" >Логин</a>
+        </li>
+        <li >
+            <a href="/rgz/register">Регистрация</a>
+        </li>
+        
+        <li>
+            <a href="/rgz/logout">Logout</a>
+        </li>
+        <li>
+            <a href="/rgz/korzina">Корзина {{ kolvo }}</a>
+        </li>
+        <li style="color: #e6e7ea;">
+            {{ username }}
+        </li>
+    </ul>
+    {% if username %}
+        <form action="/rgz/delete_user" method="POST">
+        <button type="submit" class="delete-button">Удалить пользователя</button>
+        </form>
+    {% endif %}
+  
+    {% for product in products %}
+    <div class="product">
+        <h3>{{ product.name_ }}</h3>
+        <p>{{ product.opisanie }}</p>
+        <p>Цена: {{ product.price }} руб.</p>
+        {% if username != "Anon" %}
+            <form action="/rgz/add_to_cart" method="POST">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <input type="number" name="kolvo" value="1" min="1">
+                    <p><button type="submit">Добавить в корзину</button></p>
+            </form>
+            
+        {% else %}
+            <p>Авторизуйтесь, чтобы добавить товар в корзину.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+{% endblock %}

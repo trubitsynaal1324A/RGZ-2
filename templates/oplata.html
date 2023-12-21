@@ -1,0 +1,60 @@
+<style>
+    main{
+        text-align: center;
+    }
+    button {
+        font: 16px Stem-medium, arial, sans-serif; /*Выбираем шрифт кнопки */
+        background-color: rgb(51, 101, 151); /*Выбираем цвет фона */
+        border-radius: 8px; /*Закругление */
+        color: white; /*Выбираем цвет текста*/
+        padding: 16px 20px; /*Размер внутренних отступов*/
+        margin: 8px 0;/*Размер внешних отступов*/
+        border: none; /*Без границы*/
+        cursor: pointer; /*Изменение курсора при наведении на кнопку*/
+        width: auto; /*Ширина*/
+    }
+    input {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        margin-top: 10px;
+        padding: 16px 24px;
+        width: 20%;
+        height: 5%;
+        margin-left: 550px;
+        top: 16px;
+        background: #FFFFFF;
+        border: 2px solid #1B1B1B;
+        box-sizing: border-box;
+        border-radius: 16px;
+        transition: 0.2s;
+        }
+
+
+</style>
+{% extends 'base.html' %}
+
+{% block lab %}{% endblock %}
+
+{% block main %}
+    <ul>
+        <li>
+            <a href="/rgz">Главная страница</a>
+        </li>
+    </ul>   
+    <div>
+        <h2>Итоговая сумма: {{ cart_total }} руб.</h2>
+        <form action="/rgz/oplata" method="post">
+            <label for="card_num">Номер карты:</label>
+            <input type="text" id="card_num" name="card_num" required pattern="[0-9]{16}" title="Номер карты должен содержать 16 цифр">
+            <br>
+            <label for="expiry_date">Срок действия карты:</label>
+            <input type="text" id="expiry_date" name="expiry_date" required>
+            <br>
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" name="cvv" required pattern="[0-9]{3}" title="CVV должен содержать 3 цифры">
+            <br>
+            <button type="submit">Оплатить</button>
+        </form>
+    </div>
+{% endblock %}

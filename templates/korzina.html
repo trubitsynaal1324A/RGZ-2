@@ -1,0 +1,107 @@
+<style>
+    h1{
+        text-align: center;
+    }
+    a{
+        background-color: #343e48;
+        box-shadow: 0 3px 8px rgba(0, 0, 0);
+        width: 300px;
+        text-align: center;
+        margin: 10px;
+        margin-left: 500px;
+    }
+    ul {
+        color: aliceblue;
+    }
+    table {
+    background: #343e48;
+    border-collapse: separate;
+    box-shadow: inset 0 1px 0 #fff;
+    font-size: 12px;
+    line-height: 24px;
+    margin: 30px auto;
+    text-align: left;
+    width: 800px;
+    } 
+    th {
+    color:#D5DDE5;;
+    background:#1b1e24;
+    border-bottom:4px solid #9ea7af;
+    border-right: 1px solid #343a45;
+    font-size:19px;
+    padding:20px;
+    text-align:left;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    vertical-align:middle;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+    th:last-child {
+    border-top-right-radius:3px;
+    border-right:none;
+    }
+    
+    tr {
+    border-top: 1px solid #C1C3D1;
+    border-bottom: 1px solid #C1C3D1;
+    color:#343e48;
+    font-size: 13px;
+    text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+    }
+ 
+    td {
+    background:#FFFFFF;
+    padding:10px;
+    text-align:left;
+    font-weight: 300;
+    font-size:18px;
+    border-right: 1px solid #C1C3D1;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+</style>
+
+{% extends 'base.html' %}
+
+{% block lab %}{% endblock %}
+
+{% block main %}
+
+    <li>
+        <a href="/rgz">Главная страница</a>
+    </li>
+
+    {% if cart_items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Цена</th>
+                    <th>Количество</th>
+                    <th>Удалить</th>
+                </tr>
+            </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.price }} руб.</td>
+                        <td>{{ item.kolvo }}</td>
+                        <td>
+                            <form action="/rgz/remove_from_cart" method="post">
+                                <input type="hidden" name="product_name" value="{{ item.name }}">
+                                <input type="hidden" name="product_price" value="{{ item.price }}">
+                                <input type="hidden" name="product_kolvo" value="{{ item.kolvo }}">
+                                <button type="submit">❌</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </table>
+            <div><a href="/rgz/oplata">Оформить заказ</a></div>
+        
+        {% else %}
+            <p>Ваша корзина пуста.</p>
+        {% endif %}
+{% endblock %}

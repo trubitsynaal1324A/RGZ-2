@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Курилова Кристина.{% block lab %} {% endblock %}</title>
+    <link rel="stylesheet" href="{{url_for ('static', filename='main1.css')}}">
+    
+    {% block script %}{% endblock %} 
+</head>
+<body>
+    <header>
+        WEB-программирование, часть 2. Трубицына Алиса Владимировна, ФБИ-12, 3 курс, 2023 {{self.lab()}}
+    </header>
+
+    <main>
+        {% block main %}{% endblock %}
+        <!-- <a href="/menu" target="_blank" class="menu"><h1>Меню</h1></a> -->
+    </main>
+
+
+</body>
+</html>
