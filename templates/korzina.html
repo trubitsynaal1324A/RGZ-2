@@ -89,9 +89,9 @@
                         <td>{{ item.quantity }}</td>
                         <td>
                             <form action="/rgz/remove_from_cart" method="post">
-                                <input type="hidden" name="product_name" value="{{ item.name }}">
-                                <input type="hidden" name="product_price" value="{{ item.price }}">
-                                <input type="hidden" name="product_quantity" value="{{ item.quantity }}">
+                                <input type="hidden" name="product.name" value="{{ item.name }}">
+                                <input type="hidden" name="product.price" value="{{ item.price }}">
+                                <input type="hidden" name="product.kolvo" value="{{ item.kolvo }}">
                                 <button type="submit">❌</button>
                             </form>
                         </td>

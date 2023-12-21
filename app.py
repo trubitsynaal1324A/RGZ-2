@@ -1,5 +1,5 @@
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask import Flask, Blueprint, render_template, request, make_response, redirect, url_for, session 
+from flask import Flask, Blueprint, render_template, request, make_response, redirect, url_for, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from Db import db
@@ -96,8 +96,8 @@ def registerPage():
         errors='Пользователь с данным именем уже существует'
         return render_template('register.html',errors=errors)
 
-    hashedPswd = generate_password_hash(password, method='pbkdf2')
-    newUser = User(username=username,password=hashedPswd)
+    hashedPassword = generate_password_hash(password, method='pbkdf2')
+    newUser = User(username=username,password=hashedPassword)
 
     db.session.add(newUser)
     db.session.commit()
@@ -122,7 +122,7 @@ def delete_user():
     db.session.delete(user)
     db.session.commit()
     logout_user()
-    return redirect('/log')
+    return redirect('rgz/log')
 
 @app.route('/rgz/logout')
 def logout():
@@ -142,55 +142,54 @@ def add_to_cart():
             abort(403)
 
         product_ids = request.form.getlist("product_id")
-        quantities = request.form.getlist("quantity")
+        kolvo = request.form.getlist("kolvo")
 
-        if not (product_ids and quantities):
+        if not (product_ids and kolvo):
             abort(400)
 
         cart_items = session.get("cart_items",[])
         cart_total = session.get("cart_total",0 ) # Переменная для хранения общей суммы
 
-        for product_id, quantity in zip(product_ids, quantites):
+        for product_id, kolvo in zip(product_ids, kolvo):
             product = Product.query.filter_by(id=product_id).first()
 
             if product:
-                available_quantity = product.quantity
-                requested_quantity = int(quantity)
-                if available_quantity >= requested_quantity:
-                    cart_items.append({"name": product["name"], "price": product["price"], "quantity": quantity})
-                    cart_total += int(product.price) * requested_quantity
+                available_kolvo = product.kolvo
+                requested_kolvo = int(kolvo)
+                if available_kolvo >= requested_kolvo:
+                    cart_items.append({"name": product.name, "price": product.price, "kolvo": kolvo})
+                    cart_total += int(product.price) * requested_kolvo
 
                 else:
-                    cart_items.append({"name": product["name"] , "price": product["price"] , "quantity": available_quantity})
-                    cart_total += int(product.price) * available_quantity
+                    cart_items.append({"name": product.name , "price": product.price , "quantity": available_kolvo})
+                    cart_total += int(product.price) * available_kolvo
 
         session["cart_items"] = cart_items
         session["cart_total"] = cart_total
 
         return render_template("korzina.html", cart_items=cart_items, cart_total=cart_total)
-
-
+        
 
 @app.route('/rgz/remove_from_cart', methods=["POST"])
 def remove_from_cart():
     if not session.get("username"):
         abort(403)
 
-    product_name = request.form.get("product_name")
-    product_price = request.form.get("product_price")
-    product_quantity = request.form.get("product_uantity")
+    product.name = request.form.get("product.name")
+    product.price = (request.form.get("product.price").replace(",","."))
+    product.kolvo = request.form.get("product.kolvo")
 
-    if not (product_name and product_price and product_quantity):
+    if not (product.name and product.price and product.kolvo):
         abort(400)
     cart_items = session.get("cart_items", [])
     cart_total = session.get("cart_total", 0)
 
     updated_cart_items = []
     for item in cart_items:
-        if item["name"] != product_name or item["price"] != product_price or item["quantity"] != product_quantity:
+        if item["name"] != product.name or item["price"] != product.price or item["kolvo"] != product.kolvo:
             updated_cart_items.append(item)
             price = item["price"].replace(",", ".")  
-            cart_total += float(price) * int(item["quantity"]) 
+            cart_total += float(price) * int(item["kolvo"]) 
 
     session["cart_items"] = updated_cart_items
     session["cart_total"] = cart_total 
