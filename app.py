@@ -112,7 +112,7 @@ def delete():
     db.session.delete(user)
     db.session.commit()
     logout_user()
-    return redirect('/login')
+    return redirect('log.html')
 
 @app.route("/rgz/delete_user", methods=["POST"])
 @login_required

@@ -10,7 +10,7 @@ header{
 
 }
 body {
-  background-color: #bad7e9;
+  background-color: #99fada;
 }
 
 ul {
@@ -19,7 +19,7 @@ ul {
   text-align: center;
   margin: 0 auto;
   padding: 0;
-  background-color: #343e48;
+  background-color: #52b65f;
   box-shadow: 0 3px 8px rgba(0, 0, 0);
 }
 ul:after {
@@ -50,7 +50,7 @@ a {
   transform-style: preserve-3d;
 }
 a:hover {
-  color: #0e7ded;
+  color: #045208;
 }
 a:after {
   position: absolute;
@@ -60,7 +60,7 @@ a:after {
   left: 18px;
   padding: 5px 7px;
   color: transparent;
-  background: #4795c3;
+  background: #99fada;
   transform-origin: 50% 0%;
   backface-visibility: hidden;
   transform: translate3d(0px, 105%, 0px) rotateX(-112deg);
